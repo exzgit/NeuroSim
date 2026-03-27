@@ -18,7 +18,7 @@ import { Visualizer } from './visualizer.js';
 class NeuroSim {
   constructor() {
     this.brain = new Brain();
-    this.game = new Game(15);
+    this.game = new Game(10);
     this.memory = new Memory();
     this.viz = null;
 
@@ -28,7 +28,7 @@ class NeuroSim {
 
     this.rafId = null;
     this.lastFrameTime = 0;
-    this.gameStepInterval = 64; // Run a game step every N brain ticks
+    this.gameStepInterval = 80; // Run a game step every N brain ticks
     this.ticksSinceGameStep = 0;
 
     this.teachStep = null;
