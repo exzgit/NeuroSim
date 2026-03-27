@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroSim — Biological Brain Simulation</title>
+  <meta name="description" content="Real-time biological neuron simulation where virtual neurons learn to play a game through STDP and reward modulation — not machine learning, but true biological learning." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🧠</div>
+      <div>
+        <div class="logo-text">NeuroSim</div>
+        <div class="logo-sub">Biological Brain Experiment</div>
+      </div>
+    </div>
+
+    <span id="phase-badge" class="phase-badge phase-idle">
+      <span id="phase-label">Idle</span>
+    </span>
+
+    <div class="header-stats">
+      <div class="hstat">
+        <span class="hstat-label">Timestep</span>
+        <span class="hstat-value" id="timestep-label">0</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-label">Episode</span>
+        <span class="hstat-value" id="episode-label">0</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-label">Score</span>
+        <span class="hstat-value" id="score-label">0.00</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-label">Best</span>
+        <span class="hstat-value" id="best-score">0.00</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-label">Dopamine</span>
+        <span class="hstat-value" id="dopamine-label">0.000</span>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <button class="btn btn-primary" id="btn-start">▶ Start</button>
+      <button class="btn" id="btn-pause">⏸ Pause</button>
+      <button class="btn speed-btn active" data-speed="1">1x</button>
+      <button class="btn speed-btn" data-speed="4">4x</button>
+      <button class="btn speed-btn" data-speed="16">16x</button>
+      <button class="btn" id="btn-save" title="Download memory.json">💾 Export</button>
+      <button class="btn" id="btn-reset">🔄 Reset</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════ MAIN ═══════════════════════════════════ -->
+  <div class="main-content">
+
+    <!-- ── LEFT PANEL ──────────────────────────────────────────────────── -->
+    <div class="left-panel">
+
+      <!-- Live Stats -->
+      <div class="panel">
+        <div class="panel-title">Live Statistics</div>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-card-label">Neuron Fires</div>
+            <div class="stat-card-value accent-blue" id="fires-label">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Synapses</div>
+            <div class="stat-card-value accent-purple" id="synapse-count">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Avg Weight</div>
+            <div class="stat-card-value accent-green" id="avg-weight">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Food Eaten</div>
+            <div class="stat-card-value accent-yellow" id="food-eaten">0</div>
+          </div>
+        </div>
+
+        <!-- Dopamine bar -->
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-muted); margin-bottom:4px;">
+            <span>PUNISHMENT</span><span>DOPAMINE</span><span>REWARD</span>
+          </div>
+          <div class="dopamine-bar-wrap">
+            <div class="dopamine-bar-center"></div>
+            <div class="dopamine-bar-fill" id="dopa-fill" style="width:0%;left:50%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decision -->
+      <div class="panel">
+        <div class="panel-title">Neural Decision</div>
+        <div class="decision-display">
+          <span class="decision-arrow" id="decision-label">—</span>
+          <div class="decision-info">
+            <span style="font-size:9px;color:var(--text-muted);">CONFIDENCE</span>
+            <span class="decision-confidence" id="confidence-label">—</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span style="font-size:10px;color:var(--text-muted);">Last reward:</span>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:12px;" id="last-reward">—</span>
+          <span style="font-size:10px;color:var(--text-muted);" id="reward-reason"></span>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <span style="font-size:10px;color:var(--text-muted);">Total episodes:</span>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:12px;" id="total-episodes">0</span>
+        </div>
+      </div>
+
+     
+      <!-- Memory Summary -->
+      <div class="panel">
+        <div class="panel-title">Memory</div>
+        <div class="mem-grid">
+          <div class="mem-item">
+            <span class="mem-label">Generations</span>
+            <span class="mem-value" id="mem-generations">0</span>
+          </div>
+          <div class="mem-item">
+            <span class="mem-label">Episodes</span>
+            <span class="mem-value" id="mem-episodes">0</span>
+          </div>
+          <div class="mem-item">
+            <span class="mem-label">Experience</span>
+            <span class="mem-value" id="mem-experience">0</span>
+          </div>
+          <div class="mem-item">
+            <span class="mem-label">Best Score</span>
+            <span class="mem-value" id="mem-best">0.00</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /left-panel -->
+
+    <!-- ── CENTER PANEL ────────────────────────────────────────────────── -->
+    <div class="center-panel">
+
+      <!-- Brain Visualization -->
+      <div class="brain-section">
+        <canvas id="brain-canvas" width="900" height="480"></canvas>
+      </div>
+
+      <!-- Game + Info -->
+      <div class="game-section">
+        <div class="game-canvas-wrap">
+          <canvas id="game-canvas" width="480" height="480"></canvas>
+          <div id="reward-flash"></div>
+        </div>
+
+        <div class="game-info">
+          <!-- Reward display -->
+          <div class="panel" style="padding:12px;">
+            <div class="panel-title">Last Reward</div>
+            <div class="reward-display">
+              <div class="reward-amount" id="reward-amount-display">—</div>
+              <div class="reward-reason" id="reward-reason-display">Waiting...</div>
+            </div>
+          </div>
+
+          <!-- STDP Info -->
+          <div class="panel" style="padding:12px; flex:1;">
+            <div class="panel-title">How STDP Works</div>
+            <div style="font-size:10px;color:var(--text-secondary);line-height:1.7;">
+              <p><strong style="color:var(--c-sensory);">Pre → Post fires:</strong> Connection strengthe ns (LTP)</p>
+              <p><strong style="color:var(--c-danger);">Post fires first:</strong> Connection weakens (LTD)</p>
+              <p><strong style="color:var(--c-reward);">+Dopamine:</strong> Eligible traces amplified</p>
+              <p><strong style="color:var(--c-danger);">-Dopamine:</strong> Eligible traces suppressed</p>
+              <hr style="border-color:var(--border);margin:8px 0;">
+              <p>Neurons learn purely from experience. Thicker synapse lines = stronger learned weights.</p>
+            </div>
+          </div>
+
+           <!-- Legend -->
+      <div class="panel">
+        <div class="panel-title">Neuron Types</div>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#00d4ff;"></div>
+            <span><strong>Sensory</strong> — Environmental input (5)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#a855f7;"></div>
+            <span><strong>Interneurons</strong> — Processing & memory (20)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#22c55e;"></div>
+            <span><strong>Motor</strong> — Action decisions (4)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#fbbf24;"></div>
+            <span><strong>Reward</strong> — Dopamine signal (1)</span>
+          </div>
+        </div>
+        <div style="margin-top:4px;padding-top:8px;border-top:1px solid var(--border);">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#00d4ff; width:16px; height:3px; border-radius:2px;"></div>
+            <span style="font-size:10px;">Excitatory synapse</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#ef4444; width:16px; height:3px; border-radius:2px;"></div>
+            <span style="font-size:10px;">Inhibitory synapse</span>
+          </div>
+        </div>
+      </div>
+
+        </div>
+      </div>
+
+    </div><!-- /center-panel -->
+
+    <!-- ── RIGHT PANEL ─────────────────────────────────────────────────── -->
+    <div class="right-panel">
+
+      <!-- Neuron Inspector -->
+      <div class="panel">
+        <div class="panel-title">🔍 Neuron Inspector</div>
+        <div class="inspector-panel" id="inspector-panel">
+          <span class="inspector-hint">Hover a neuron to inspect its state</span>
+        </div>
+      </div>
+
+      <!-- Score Chart -->
+      <div class="panel" style="min-height:160px;">
+        <div class="panel-title">📈 Score History</div>
+        <div class="chart-wrap" style="height:130px;">
+          <canvas id="chart-canvas" width="280" height="130"></canvas>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);">
+          <span>Last 60 episodes</span>
+          <span id="chart-trend"></span>
+        </div>
+      </div>
+
+      <!-- Event Log -->
+      <div class="panel" style="flex:1;min-height:0;">
+        <div class="panel-title">📋 Event Log</div>
+        <div class="log-panel" id="log-panel"></div>
+      </div>
+
+    </div><!-- /right-panel -->
+
+  </div><!-- /main-content -->
+</div><!-- /app -->
+
+<!-- Update dopamine bar from JS via simple polling -->
+<script>
+  setInterval(() => {
+    // Dopamine bar update (done outside module to keep it simple)
+    if (window.sim && window.sim.brain) {
+      const level = window.sim.brain.dopamineLevel;
+      const fill = document.getElementById('dopa-fill');
+      if (fill) {
+        const pct = Math.abs(level) * 50;
+        fill.style.width = pct + '%';
+        fill.style.left = level >= 0 ? '50%' : (50 - pct) + '%';
+        fill.style.background = level >= 0 ? '#fbbf24' : '#ef4444';
+      }
+
+      // Reward display sync
+      const ra = document.getElementById('reward-amount-display');
+      const rr = document.getElementById('reward-reason-display');
+      if (ra && window.sim._lastRewardAmount !== undefined) {
+        const amt = window.sim._lastRewardAmount;
+        ra.textContent = (amt > 0 ? '+' : '') + amt.toFixed(2);
+        ra.className = 'reward-amount ' + (amt >= 0 ? 'pos' : 'neg');
+      }
+    }
+  }, 100);
+
+  // Patch sim to track last reward
+  window.addEventListener('DOMContentLoaded', () => {
+    const orig = window.sim;
+    const checkSim = setInterval(() => {
+      if (window.sim && window.sim.game) {
+        clearInterval(checkSim);
+        const origCb = window.sim.game.onReward;
+        window.sim.game.onReward = (amount, reason) => {
+          window.sim._lastRewardAmount = amount;
+          if (origCb) origCb(amount, reason);
+        };
+      }
+    }, 100);
+  });
+</script>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

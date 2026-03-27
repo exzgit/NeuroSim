@@ -1,0 +1,16 @@
+{
+  "name": "neural-learn",
+  "version": "1.0.0",
+  "description": "Biological brain simulation webapp (NeuroSim)",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "dev": "serve .",
+    "build": "echo 'No build step needed'"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}
