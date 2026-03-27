@@ -18,24 +18,24 @@ import { Visualizer } from './visualizer.js';
 class NeuroSim {
   constructor() {
     this.brain = new Brain();
-    this.game = new Game(25);
+    this.game = new Game(15);
     this.memory = new Memory();
     this.viz = null;
 
     this.phase = 'idle';       // 'idle' | 'teaching' | 'playing' | 'paused'
-    this.speed = 4;            // 1 = normal, 4 = fast, 16 = ultra
+    this.speed = 1;            // 1 = normal, 4 = fast, 16 = ultra
     this.ticksPerFrame = 1;
 
     this.rafId = null;
     this.lastFrameTime = 0;
-    this.gameStepInterval = 16; // Run a game step every N brain ticks
+    this.gameStepInterval = 32; // Run a game step every N brain ticks
     this.ticksSinceGameStep = 0;
 
     this.teachStep = null;
     this.currentTeachSequence = [];
     this.teachIndex = 0;
 
-    this.saveInterval = 30;  
+    this.saveInterval = 100;  
     this.episodeCount = 0;
 
     this.logMessages = [];

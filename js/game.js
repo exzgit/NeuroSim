@@ -26,7 +26,7 @@ export class Game {
     this.score = 0;
     this.episode = 0;
     this.steps = 0;
-    this.maxSteps = 400;
+    this.maxSteps = 10000;
     this.foodEaten = 0;
     this.wallHits = 0;
     this.idleCount = 0;
@@ -62,8 +62,8 @@ export class Game {
     this.lastPos = { ...this.agent };
     this.prevDistToFood = Infinity;
 
-    this._spawnFood(15);
-    this._spawnHazards(8);
+    this._spawnFood(20);
+    this._spawnHazards(5);
   }
 
   _spawnFood(count) {
