@@ -28,7 +28,7 @@ class NeuroSim {
 
     this.rafId = null;
     this.lastFrameTime = 0;
-    this.gameStepInterval = 32; // Run a game step every N brain ticks
+    this.gameStepInterval = 64; // Run a game step every N brain ticks
     this.ticksSinceGameStep = 0;
 
     this.teachStep = null;

@@ -67,7 +67,7 @@ export class Brain {
     }
 
     // === Interneurons (20) ===
-    for (let i = 0; i < 64; i++) {
+    for (let i = 0; i < 100; i++) {
       const n = new Neuron(`inter_${i}`, 'inter', `Hidden ${i}`);
       this.interNeurons.push(n);
       this.neurons.push(n);
