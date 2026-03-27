@@ -18,7 +18,7 @@ import { Visualizer } from './visualizer.js';
 class NeuroSim {
   constructor() {
     this.brain = new Brain();
-    this.game = new Game(10);
+    this.game = new Game(12);
     this.memory = new Memory();
     this.viz = null;
 

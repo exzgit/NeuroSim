@@ -62,8 +62,8 @@ export class Game {
     this.lastPos = { ...this.agent };
     this.prevDistToFood = Infinity;
 
-    this._spawnFood(20);
-    this._spawnHazards(5);
+    this._spawnFood(10);
+    this._spawnHazards(4);
   }
 
   _spawnFood(count) {
